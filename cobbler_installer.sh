@@ -3,7 +3,7 @@
 # @@ScriptName: cobbler_installer.sh
 # @@Author: zhenyu<fjctlzy@gmail.com>
 # @@Create Date: 2013-08-04 17:22:12
-# @@Modify Date: 2013-08-04 17:22:29
+# @@Modify Date: 2013-08-04 17:34:13
 # @@Function:
 #*********************************************************#
 
@@ -14,7 +14,7 @@ if [[ `id -u` -ne 0 ]]; then
 fi
 
 root_password=$1
-if [[ -z "root_password" ]]; then
+if [[ -z "$root_password" ]]; then
      echo "Root Password is required, Usage: cobbler_installer your_root_password"
      exit 1
 fi
