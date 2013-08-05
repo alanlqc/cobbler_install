@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 #*********************************************************#
-# @@ScriptName: cobbler_installer.sh
+# @@ScriptName: cobbler_installer_for_centos.sh
 # @@Author: zhenyu<fjctlzy@gmail.com>
 # @@Create Date: 2013-08-04 17:22:12
-# @@Modify Date: 2013-08-04 17:34:13
+# @@Modify Date: 2013-08-05 18:58:40
 # @@Function:
 #*********************************************************#
-
-
 if [[ `id -u` -ne 0 ]]; then
      echo "The script should be run using Root"
      exit 1
@@ -36,6 +34,8 @@ service iptables stop
 
 #turn off selinux
 sed -i 's;SELINUX=enforcing;SELINUX=disabled;g' /etc/sysconfig/selinux
+sed -i 's;SELINUX=enforcing;SELINUX=disabled;g' /etc/selinux/config
+
 setenforce 0
 
 
@@ -84,9 +84,13 @@ sed -i 's;disable.*;disable = no;g' /etc/xinetd.d/rsync
 sed -i 's;next_server.*;next_server: '"$ip"' ;g'  /etc/cobbler/settings
 sed -i 's;server:[[:space:]]\+127.0.0.1;server: '"$ip"';g'  /etc/cobbler/settings
 
+#cobbler web password
+echo "Set up cobbler web password"
+sed -i 's/authn_denyall/authn_configfile/g' /etc/cobbler/modules.conf
+htdigest /etc/cobbler/users.digest "Cobbler" cobbler
+
+
 #restart the cobbler to make settings work
 service cobblerd restart
 cobbler sync
 cobbler check
-
-
