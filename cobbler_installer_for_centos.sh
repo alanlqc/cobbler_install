@@ -3,7 +3,7 @@
 # @@ScriptName: cobbler_installer_for_centos.sh
 # @@Author: zhenyu<fjctlzy@gmail.com>
 # @@Create Date: 2013-08-04 17:22:12
-# @@Modify Date: 2013-08-09 16:17:59
+# @@Modify Date: 2013-08-09 16:33:03
 # @@Function:
 #*********************************************************#
 if [[ `id -u` -ne 0 ]]; then
@@ -13,8 +13,8 @@ fi
 
 #get configuration
 root_password=`awk -F= '/root_password/ {print $2}' config`
-hostname = `awk -F= '/hostname/ {print $2}' config`
-interface = `awk -F= '/interface/ {print $2}' config`
+hostname=`awk -F= '/hostname/ {print $2}' config`
+interface=`awk -F= '/interface/ {print $2}' config`
 
 if [[ -z "$root_password" ]]; then
      echo "Root Password is required, Usage: cobbler_installer your_root_password"

@@ -3,7 +3,7 @@
 # @@ScriptName: puppet_installer_for_center.sh
 # @@Author: zhenyu<fjctlzy@gmail.com>
 # @@Create Date: 2013-08-09 08:23:25
-# @@Modify Date: 2013-08-09 16:19:17
+# @@Modify Date: 2013-08-09 16:33:06
 # @@Function:
 #*********************************************************##!/usr/bin/env bash
 #*********************************************************#
@@ -14,7 +14,7 @@
 # @@Function:
 #*********************************************************#
 
-hostname = `awk -F= '/hostname/ {print $2}' config`
+hostname=`awk -F= '/hostname/ {print $2}' config`
 
 #add puppetlabs repo
 cobbler repo add --mirror=http://yum.puppetlabs.com/el/6/products/x86_64/ --name=puppetlabs
