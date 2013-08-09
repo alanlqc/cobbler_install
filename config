@@ -1,4 +1,4 @@
 hostname = puppet.cobbler.com
 root_password = 123456
 cobbler_web_password = 1234567
-interface = eth0
+interface = eth0
