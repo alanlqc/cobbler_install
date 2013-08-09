@@ -3,7 +3,7 @@
 # @@ScriptName: cobbler_installer_for_centos.sh
 # @@Author: zhenyu<fjctlzy@gmail.com>
 # @@Create Date: 2013-08-04 17:22:12
-# @@Modify Date: 2013-08-05 18:58:40
+# @@Modify Date: 2013-08-09 16:17:59
 # @@Function:
 #*********************************************************#
 if [[ `id -u` -ne 0 ]]; then
@@ -11,7 +11,11 @@ if [[ `id -u` -ne 0 ]]; then
      exit 1
 fi
 
-root_password=$1
+#get configuration
+root_password=`awk -F= '/root_password/ {print $2}' config`
+hostname = `awk -F= '/hostname/ {print $2}' config`
+interface = `awk -F= '/interface/ {print $2}' config`
+
 if [[ -z "$root_password" ]]; then
      echo "Root Password is required, Usage: cobbler_installer your_root_password"
      exit 1
@@ -35,22 +39,19 @@ service iptables stop
 #turn off selinux
 sed -i 's;SELINUX=enforcing;SELINUX=disabled;g' /etc/sysconfig/selinux
 sed -i 's;SELINUX=enforcing;SELINUX=disabled;g' /etc/selinux/config
-
 setenforce 0
-
 
 #replace all spaces to one space
 sed -i 's/^[[:space:]]\+/ /' /etc/cobbler/settings
 sed -i -e  "s;manage_dhcp: 0;manage_dhcp: 1;g" -e "s;manage_rsync: 0;manage_rsync: 1;g" -e "s;allow_dynamic_settings: 0;allow_dynamic_settings: 1;g" /etc/cobbler/settings
 
-
 #install loaders
 cobbler get-loaders
 
 #replace dhcp.template
-ip=`ifconfig  eth0 | grep "inet addr"  | awk -F: '{print $2}' | awk '{print $1}'`
+ip=`ifconfig  $interface | grep "inet addr"  | awk -F: '{print $2}' | awk '{print $1}'`
 gateway=`netstat -r | grep default  | awk '{print $2}'`
-mask=`ifconfig  eth0 | grep "Mask" | awk -F: '{print $NF}'`
+mask=`ifconfig  $interface | grep "Mask" | awk -F: '{print $NF}'`
 A=`echo $mask | awk -F. '{print $1}'`
 B=`echo $mask | awk -F. '{print $2}'`
 C=`echo $mask | awk -F. '{print $3}'`
@@ -89,8 +90,12 @@ echo "Set up cobbler web password"
 sed -i 's/authn_denyall/authn_configfile/g' /etc/cobbler/modules.conf
 htdigest /etc/cobbler/users.digest "Cobbler" cobbler
 
+#change the hostname
+grep 'HOSTNAME' /etc/sysconfig/network && sed -i 's;HOSTNAME=.*;HOSTNAME='$hostname';g' /etc/sysconfig/network || echo "HOSTNAME=$hostname" >> /etc/sysconfig/network
+hostname $hostname
 
 #restart the cobbler to make settings work
 service cobblerd restart
 cobbler sync
 cobbler check
+

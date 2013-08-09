@@ -1,0 +1,7 @@
+Cobbler Installer helps you to install cobbler&puppet much easier and faster.
+I have tested this only on CentOS6.4 x86_64, but it should be worked on other Redhat release.
+
+Usage:
+    sh installer.sh
+
+And after installer finishes, please reboot the server to make sure that hostname&selinux works.
